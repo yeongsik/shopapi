@@ -1,6 +1,7 @@
 package com.shopapi.lecture.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -20,7 +21,8 @@ public class TestEntity {
     @Lob
     private String content;
 
-    public TestEntity(String title, String content) {
+    @Builder
+    private TestEntity(String title, String content) {
         this.title = title;
         this.content = content;
     }

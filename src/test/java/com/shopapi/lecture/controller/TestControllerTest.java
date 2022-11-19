@@ -1,7 +1,9 @@
-package com.shopapi.controller;
+package com.shopapi.lecture.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.repository.TestRepository;
+import com.shopapi.lecture.request.TestCreate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,6 +24,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class TestControllerTest {
 
+    @Autowired
+    private ObjectMapper objectMapper;
     @Autowired
     private MockMvc mockMvc;
 
@@ -82,9 +86,20 @@ class TestControllerTest {
     @Test
     @DisplayName("/api/helloPostJson 요청시 Hello를 출력")
     void postTestByJson() throws Exception {
+        // given
+        TestCreate request = TestCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        System.out.println(json);
+
+        //expected
         mockMvc.perform(post("/api/helloPostJson")
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\": \"제목입니다.\", \"content\" : \"내용입니다.\"}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello"))
                 .andDo(print());
@@ -122,10 +137,20 @@ class TestControllerTest {
         // before
 //        testRepository.deleteAll(); // 지저분한 방식 -> @BeforeEach 사용
 
+        //given
+        TestCreate request = TestCreate.builder()
+                .title("제목입니다")
+                .content("내용입니다.")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+        // objectMapper 설정을 변경할 때 새로운 빈 생성하자
+        System.out.println(json);
+
         //when
         mockMvc.perform(post("/api/tests")
                         .contentType(APPLICATION_JSON)
-                        .content("{\"title\": \"제목입니다\", \"content\" : \"내용입니다.\"}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andDo(print());
 

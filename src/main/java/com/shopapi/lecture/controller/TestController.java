@@ -1,6 +1,6 @@
 package com.shopapi.lecture.controller;
 
-import com.shopapi.lecture.request.TestConcrete;
+import com.shopapi.lecture.request.TestCreate;
 import com.shopapi.lecture.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,13 +32,13 @@ public class TestController {
     }
 
     @PostMapping("/api/helloPostClass")
-    public String postRequestClass(@ModelAttribute TestConcrete requestTest) {
+    public String postRequestClass(@ModelAttribute TestCreate requestTest) {
         log.info("requestTest = {}" , requestTest.toString());
         return "Hello";
     }
 
     @PostMapping("/api/helloPostJson")
-    public Map<String, String> postRequestJson(@RequestBody @Valid TestConcrete requestTest, BindingResult result) throws Exception {
+    public Map<String, String> postRequestJson(@RequestBody @Valid TestCreate requestTest, BindingResult result) throws Exception {
         /*
             데이터 검증을 하는 이유
             1. client 개발자가 깜빡할 수 있다. -> 실수로 값을 안 보낼 수 있음
@@ -102,15 +102,29 @@ public class TestController {
     }
 
     @PostMapping("/api/validationByControllerAdvice")
-    public Map<String, String> validationByControllerAdvice(@RequestBody @Valid TestConcrete requestTest) throws Exception {
+    public Map<String, String> validationByControllerAdvice(@RequestBody @Valid TestCreate requestTest) throws Exception {
         log.info("requestTest = {}" , requestTest.toString());
         return Map.of();
     }
 
     @PostMapping("/api/tests")
-    public Map<String, String> test(@RequestBody @Valid TestConcrete request) {
+    public void test(@RequestBody @Valid TestCreate request) {
         // service.save(testParams);
+        // 포스트 데이터는 리턴 하지 않는다. hhtp status 200 or 201 주로 사용
         testService.saveTest(request);
-        return Map.of();
+
+        // Post 리턴 방식 종류
+        // Case1. 저장한 데이터 Entity -> reponse로 응답하기
+        // Case2. 저장한 데이터의 primary_id -> response로 응답
+            // clent 에서는 수신한 id를 가지고 글 조회 API 통해 데이터를 수신 받음
+        // Case3. 응답 필요 없음 -> 클라이언트에서 데이터 context를 잘 관리
+            // -> ex ) 게시판 : 게시글을 작성 후 게시글 목록으로 갈 때 새로고침이 되니까 굳이 데이터가 받을 필요가 없어지는 경우
+        // Bad Case : 서버에서 방법을 픽스해버리는 경우
+        //      서버에서는 유연하게 대응하는 것이 좋다 => 코드를 잘 짜야함
+        //      한 번에 일괄적으로 깔끔하게 처리되는 케이스가 없다 -> 잘 관리하는 형태가 중요
+
     }
+    // Case1. 저장한 데이터 Entity -> reponse로 응답하기
+
+    // Case2. 저장한 데이터의 primary_id -> response로 응답
 }

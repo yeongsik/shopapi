@@ -1,5 +1,6 @@
 package com.shopapi.lecture.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,7 +18,6 @@ import java.util.Map;
  * }
  */
 @Getter
-@RequiredArgsConstructor
 public class ErrorResponse {
     // 회사마다 , 팀마다 에러 클래스를 정의하는 것은 다르다.
 
@@ -25,6 +25,12 @@ public class ErrorResponse {
     private final String code;
     private final String message;
     private final Map<String, String> validation = new HashMap<>();
+    @Builder
+    private ErrorResponse(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
+
     public void addValidation(String field, String errorMessage) {
         this.validation.put(field, errorMessage);
     }
