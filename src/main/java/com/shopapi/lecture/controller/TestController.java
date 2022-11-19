@@ -139,4 +139,15 @@ public class TestController {
         Long id = testService.saveTestReturnKey(request);
         return Map.of("testId", id);
     }
+
+    /**
+     * /tests -> 글 전체 조회 (검색 + 페이징)
+     * /tests/{testId} -> 글 한개만 조회
+     */
+
+    @GetMapping("/api/tests/{testId}")
+    public TestEntity get(@PathVariable Long testId) {
+        TestEntity testEntity = testService.get(testId);
+        return testEntity;
+    }
 }

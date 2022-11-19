@@ -42,4 +42,10 @@ public class TestService {
 
         return save.getId();
     }
+
+    public TestEntity get(Long testId) {
+        TestEntity test = testRepository.findById(testId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+        return test;
+    }
 }

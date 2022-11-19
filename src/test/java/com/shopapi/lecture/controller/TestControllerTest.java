@@ -204,4 +204,25 @@ class TestControllerTest {
                 .andExpect(jsonPath("$.testId").value(1))
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("/api/tests/{testId}로 get 요청시 글 1건 조회")
+    void test4() throws Exception {
+        //given
+        TestEntity testEntity = TestEntity.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        testRepository.save(testEntity);
+
+        //expected ( when 과 then 을 섞은 의미 )
+        mockMvc.perform(get("/api/tests/{testId}", testEntity.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(testEntity.getId()))
+                .andExpect(jsonPath("$.title").value(testEntity.getTitle()))
+                .andExpect(jsonPath("$.content").value(testEntity.getContent()))
+                .andDo(print());
+    }
+
 }
