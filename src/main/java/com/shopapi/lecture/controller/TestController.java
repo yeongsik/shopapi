@@ -1,6 +1,8 @@
 package com.shopapi.lecture.controller;
 
-import com.shopapi.lecture.request.Test;
+import com.shopapi.lecture.request.TestConcrete;
+import com.shopapi.lecture.service.TestService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -13,7 +15,10 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class TestController {
+
+    private final TestService testService;
 
     @GetMapping("/api/hello")
     public String get() {
@@ -27,13 +32,13 @@ public class TestController {
     }
 
     @PostMapping("/api/helloPostClass")
-    public String postRequestClass(@ModelAttribute Test requestTest) {
+    public String postRequestClass(@ModelAttribute TestConcrete requestTest) {
         log.info("requestTest = {}" , requestTest.toString());
         return "Hello";
     }
 
     @PostMapping("/api/helloPostJson")
-    public Map<String, String> postRequestJson(@RequestBody @Valid Test requestTest, BindingResult result) throws Exception {
+    public Map<String, String> postRequestJson(@RequestBody @Valid TestConcrete requestTest, BindingResult result) throws Exception {
         /*
             데이터 검증을 하는 이유
             1. client 개발자가 깜빡할 수 있다. -> 실수로 값을 안 보낼 수 있음
@@ -97,8 +102,15 @@ public class TestController {
     }
 
     @PostMapping("/api/validationByControllerAdvice")
-    public Map<String, String> validationByControllerAdvice(@RequestBody @Valid Test requestTest) throws Exception {
+    public Map<String, String> validationByControllerAdvice(@RequestBody @Valid TestConcrete requestTest) throws Exception {
         log.info("requestTest = {}" , requestTest.toString());
+        return Map.of();
+    }
+
+    @PostMapping("/api/tests")
+    public Map<String, String> test(@RequestBody @Valid TestConcrete request) {
+        // service.save(testParams);
+        testService.saveTest(request);
         return Map.of();
     }
 }

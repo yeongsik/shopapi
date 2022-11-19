@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 @Getter
 @ToString
-public class Test {
+public class TestConcrete {
 
     @NotBlank(message = "타이틀을 입력해주세요.")
     private String title;
