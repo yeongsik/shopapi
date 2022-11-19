@@ -161,4 +161,47 @@ class TestControllerTest {
         assertEquals("제목입니다" , test.getTitle());
         assertEquals("내용입니다." , test.getContent());
     }
+
+    @Test
+    @DisplayName("/api/tests/returnEntity 로 포스트 요청이 왔을 때 TestEntity 리턴")
+    void postReturnEntity() throws Exception {
+
+        //given
+        TestCreate request = TestCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+        mockMvc.perform(post("/api/tests/returnEntity")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().json(json))
+                .andDo(print());
+
+        TestEntity validTest = testRepository.findAll().get(0);
+        assertEquals("제목입니다.", validTest.getTitle());
+        assertEquals("내용입니다.", validTest.getContent());
+
+
+    }
+
+    @Test
+    @DisplayName("/api/tests/returnPrimaryKey 로 포스트 요청이 왔을 때 primary_id 리턴")
+    void postReturnKey() throws Exception {
+        // given
+        TestCreate request = TestCreate.builder()
+                .title("제목입니다.")
+                .content("내용입니다.")
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+
+        // when
+        mockMvc.perform(post("/api/tests/returnPrimaryKey")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.testId").value(1))
+                .andDo(print());
+    }
 }

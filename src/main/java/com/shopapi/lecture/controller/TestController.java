@@ -1,5 +1,6 @@
 package com.shopapi.lecture.controller;
 
+import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.request.TestCreate;
 import com.shopapi.lecture.service.TestService;
 import lombok.RequiredArgsConstructor;
@@ -124,7 +125,18 @@ public class TestController {
         //      한 번에 일괄적으로 깔끔하게 처리되는 케이스가 없다 -> 잘 관리하는 형태가 중요
 
     }
+
     // Case1. 저장한 데이터 Entity -> reponse로 응답하기
+    @PostMapping("/api/tests/returnEntity")
+    public TestEntity postReturnEntity(@RequestBody @Valid TestCreate request) {
+        return testService.saveTestReturnEntity(request);
+    }
 
     // Case2. 저장한 데이터의 primary_id -> response로 응답
+    @PostMapping("/api/tests/returnPrimaryKey")
+    public Map postReturnKey(@RequestBody @Valid TestCreate request) {
+
+        Long id = testService.saveTestReturnKey(request);
+        return Map.of("testId", id);
+    }
 }

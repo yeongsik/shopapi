@@ -24,4 +24,22 @@ public class TestService {
 
         testRepository.save(test);
     }
+
+    public TestEntity saveTestReturnEntity(TestCreate request) {
+        TestEntity test = TestEntity.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .build();
+        return testRepository.save(test);
+    }
+
+    public Long saveTestReturnKey(TestCreate request) {
+        TestEntity test = TestEntity.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .build();
+        TestEntity save = testRepository.save(test);
+
+        return save.getId();
+    }
 }
