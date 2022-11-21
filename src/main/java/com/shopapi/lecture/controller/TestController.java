@@ -2,6 +2,7 @@ package com.shopapi.lecture.controller;
 
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.response.TestResponse;
 import com.shopapi.lecture.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,8 +147,11 @@ public class TestController {
      */
 
     @GetMapping("/api/tests/{testId}")
-    public TestEntity get(@PathVariable Long testId) {
-        TestEntity testEntity = testService.get(testId);
-        return testEntity;
+    public TestResponse get(@PathVariable Long testId) {
+        // Request 클래스 (요청 , Validation 정책)
+        // Response 클래스 나눠서 사용 (서비스 정책에 맞는 로직이 들어갈 수 있다.)
+
+        TestResponse response = testService.get(testId);
+        return response;
     }
 }

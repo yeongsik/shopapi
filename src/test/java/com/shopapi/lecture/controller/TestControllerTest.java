@@ -210,7 +210,7 @@ class TestControllerTest {
     void test4() throws Exception {
         //given
         TestEntity testEntity = TestEntity.builder()
-                .title("제목입니다.")
+                .title("12345")
                 .content("내용입니다.")
                 .build();
         testRepository.save(testEntity);
@@ -220,9 +220,11 @@ class TestControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testEntity.getId()))
-                .andExpect(jsonPath("$.title").value(testEntity.getTitle()))
-                .andExpect(jsonPath("$.content").value(testEntity.getContent()))
+                .andExpect(jsonPath("$.title").value("12345"))
+                .andExpect(jsonPath("$.content").value("내용입니다."))
                 .andDo(print());
     }
 
+
+    //
 }

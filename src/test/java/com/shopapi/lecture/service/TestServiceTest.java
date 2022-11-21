@@ -3,6 +3,7 @@ package com.shopapi.lecture.service;
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.repository.TestRepository;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.response.TestResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,18 +50,30 @@ class TestServiceTest {
         // given
         // 조회 형식의 테스트 할 때는 우선 저장해줘야 한다.
         TestEntity request = TestEntity.builder()
-                .title("제목입니다.")
+                .title("12345")
                 .content("내용입니다.")
                 .build();
         testRepository.save(request);
-        Long testId = 1L;
+
+        // 나중에 이런 요구사항이 올 수 있다.
+        /*
+            클라이언트 요구사항
+                json 응답에서 title값 길이를 최대 10글자로 해주세요. ( 이런 처리는 클라에서 하는 게 좋다 )
+                but 서버에서 해야만 한다면?
+                1. Entity에 getTitle 메소드 변경
+                    return title.substring(0,10);
+                    => 나중에 어떤 특정 기능이 추가가 되었을 때 10글자 정책과 충돌이 발생될 때? entity 클래스를 또 변경해야하는가??
+                    => 이러한 이유 때문에 Entity 클래스에는 서비스 정책 넣지 말기 (Never)
+                    서로 다른 개발자가 헷갈리게 됨
+         */
 
         // when
-        TestEntity testEntity = testService.get(request.getId());
+        TestResponse response = testService.get(request.getId());
 
         // then
-        assertNotNull(testEntity);
-        assertEquals(request.getTitle(), testEntity.getTitle());
-        assertEquals(request.getContent(), testEntity.getContent());
+        assertNotNull(response);
+        assertEquals(request.getId(), response.getId());
+        assertEquals(request.getTitle(), "12345");
+        assertEquals(request.getContent(), response.getContent());
     }
 }
