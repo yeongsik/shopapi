@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -75,5 +77,31 @@ class TestServiceTest {
         assertEquals(request.getId(), response.getId());
         assertEquals(request.getTitle(), "12345");
         assertEquals(request.getContent(), response.getContent());
+    }
+
+    @Test
+    @DisplayName("글 여러개 조회")
+    void testGetList() {
+        //given
+        TestEntity request1 = TestEntity.builder()
+                .title("제목1")
+                .content("내용입니다1.")
+                .build();
+        testRepository.saveAll(List.of(
+                TestEntity.builder()
+                        .title("제목1")
+                        .content("내용입니다1.")
+                        .build(),
+                TestEntity.builder()
+                        .title("제목2")
+                        .content("내용입니다2.")
+                        .build()
+        )); // List.of - > Java 9 부터 생긴 문법 ->
+
+        //when
+        List<TestResponse> list = testService.getList();
+
+        //then
+        assertEquals(2L,list.size());
     }
 }

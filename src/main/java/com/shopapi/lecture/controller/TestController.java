@@ -146,12 +146,20 @@ public class TestController {
      * /tests/{testId} -> 글 한개만 조회
      */
 
+    // 단건 조회
     @GetMapping("/api/tests/{testId}")
     public TestResponse get(@PathVariable Long testId) {
         // Request 클래스 (요청 , Validation 정책)
         // Response 클래스 나눠서 사용 (서비스 정책에 맞는 로직이 들어갈 수 있다.)
+        return testService.get(testId);
+    }
 
-        TestResponse response = testService.get(testId);
-        return response;
+    // 다건 조회
+    /*
+        작성된 글 목록을 가져올 때 필요
+     */
+    @GetMapping("/api/tests")
+    public List<TestResponse> getList() {
+        return testService.getList();
     }
 }

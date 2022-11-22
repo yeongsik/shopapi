@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -78,28 +79,6 @@ class TestControllerTest {
                         .contentType(APPLICATION_FORM_URLENCODED)
                         .param("title", "글제목입니다.")
                         .param("content", "글 내용입니다"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Hello"))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("/api/helloPostJson 요청시 Hello를 출력")
-    void postTestByJson() throws Exception {
-        // given
-        TestCreate request = TestCreate.builder()
-                .title("제목입니다.")
-                .content("내용입니다.")
-                .build();
-
-        String json = objectMapper.writeValueAsString(request);
-
-        System.out.println(json);
-
-        //expected
-        mockMvc.perform(post("/api/helloPostJson")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Hello"))
                 .andDo(print());
@@ -225,6 +204,37 @@ class TestControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("/api/tests 접근시 글 여러개 조회")
+    void testGetList() throws Exception {
 
-    //
+        // given
+        TestEntity request1 = testRepository.save(TestEntity.builder()
+                .title("제목1")
+                .content("내용입니다.1")
+                .build());
+
+        TestEntity request2 = testRepository.save(TestEntity.builder()
+                .title("제목2")
+                .content("내용입니다.2")
+                .build());
+
+        //expected
+        mockMvc.perform(get("/api/tests")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                /*
+                JSON 응답형태가 List형태로 내려진다. 단건 조회처럼 검증하면 안된다.
+                 */
+                .andExpect(jsonPath("$.length()", is(2)))
+                .andExpect(jsonPath("$.[0].id").value(request1.getId()))
+                .andExpect(jsonPath("$.[0].title").value("제목1"))
+                .andExpect(jsonPath("$.[0].content").value("내용입니다.1"))
+                .andExpect(jsonPath("$.[1].id").value(request2.getId()))
+                .andExpect(jsonPath("$.[1].title").value("제목2"))
+                .andExpect(jsonPath("$.[1].content").value("내용입니다.2"))
+                .andDo(print());
+
+    }
+
 }

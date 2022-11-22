@@ -48,7 +48,6 @@ public class TestExceptionController {
             response.addValidation(fieldError.getField(), fieldError.getDefaultMessage());
         }
         // code 나 메세지 값들이 변경시 테스트 코드에서도 맞춰줘야하는 개선 점이 있다.
-
         return response;
     }
 

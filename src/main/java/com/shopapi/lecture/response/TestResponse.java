@@ -1,5 +1,6 @@
 package com.shopapi.lecture.response;
 
+import com.shopapi.lecture.domain.TestEntity;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -12,6 +13,13 @@ public class TestResponse {
     private Long id;
     private String title;
     private String content;
+
+    // 생성자 오버로딩
+    public TestResponse(TestEntity test) {
+        this.id = test.getId();
+        this.title = test.getTitle();
+        this.content = test.getContent();
+    }
 
     @Builder
     public TestResponse(Long id, String title, String content) {
