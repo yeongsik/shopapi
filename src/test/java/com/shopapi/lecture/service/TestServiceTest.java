@@ -9,10 +9,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @SpringBootTest
 class TestServiceTest {
@@ -80,28 +86,33 @@ class TestServiceTest {
     }
 
     @Test
-    @DisplayName("글 여러개 조회")
+    @DisplayName("글 1페이지 조회")
     void testGetList() {
         //given
-        TestEntity request1 = TestEntity.builder()
-                .title("제목1")
-                .content("내용입니다1.")
-                .build();
-        testRepository.saveAll(List.of(
-                TestEntity.builder()
-                        .title("제목1")
-                        .content("내용입니다1.")
-                        .build(),
-                TestEntity.builder()
-                        .title("제목2")
-                        .content("내용입니다2.")
-                        .build()
-        )); // List.of - > Java 9 부터 생긴 문법 ->
+        List<TestEntity> requestTests = IntStream.range(1, 31)
+                .mapToObj(i -> TestEntity.builder()
+                        .title("제목 " + i)
+                        .content("내용 " + i)
+                        .build())
+                .collect(Collectors.toList());
+        testRepository.saveAll(requestTests);
+        /*
+            IntStream.range(0,30) - 아래 for문과 동일하다고 볼 수 있다.
+            for(int i = 0; i < 30; i++) {
+            }
+         */
+
+        // List.of - > Java 9 부터 생긴 문법 ->
+        //sql = select, limit , offset 필수
+
+        PageRequest pageable = PageRequest.of(0, 5, Sort.by(DESC, "id"));
 
         //when
-        List<TestResponse> list = testService.getList();
+        List<TestResponse> list = testService.getList(pageable);
 
         //then
-        assertEquals(2L,list.size());
+        assertEquals(5L,list.size());
+        assertEquals("제목 30",list.get(0).getTitle());
+        assertEquals("제목 26",list.get(4).getTitle());
     }
 }

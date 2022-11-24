@@ -6,6 +6,7 @@ import com.shopapi.lecture.request.TestCreate;
 import com.shopapi.lecture.response.TestResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -59,8 +60,27 @@ public class TestService {
         return new TestResponse(test);
     }
 
-    public List<TestResponse> getList() {
-        return testRepository.findAll().stream()
+
+    // 글이 너무 많은 경우에 비용이 많이 든다. => 페이징 처리
+    // 글이 1억개 일 경우 DB에서 글을 모두 조회하는 경우 DB가 다운될 수도 있다.
+    // 트래픽 비용이 많이 발생 -> 데이터 전체를 조회하는 경우는 거의 없다.
+    // 카테고리 같은 많지 않은 데이터의 경우 다 가지고 오는 경우가 있다.
+
+    public List<TestResponse> getList(Pageable page) {
+
+        // 아래 web -> page 1 -> 0으로 변경
+        /*
+                data:
+                    web:
+                      pageable:
+                        one-indexed-parameters: true
+         */
+        // Pageable pageable = PageRequest.of(page, 5 , Sort.by(Sort.Direction.DESC, "id"));
+        // 수동으로 해봤자 의미 없다.
+
+        // 기본으로 아이디 값에 오름차순 정렬도 페이징 처리가 된다.
+        // PageRequest.of 뒤에 sort 설정
+        return testRepository.findAll(page).stream()
                 .map(TestResponse::new)
                 .collect(Collectors.toList());
         // 빌더 코드들이 굉장히 많아 지기 때문에 -> 반복 작업 증가로 볼 수 도 있다.

@@ -12,6 +12,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
@@ -209,30 +213,27 @@ class TestControllerTest {
     void testGetList() throws Exception {
 
         // given
-        TestEntity request1 = testRepository.save(TestEntity.builder()
-                .title("제목1")
-                .content("내용입니다.1")
-                .build());
 
-        TestEntity request2 = testRepository.save(TestEntity.builder()
-                .title("제목2")
-                .content("내용입니다.2")
-                .build());
+        List<TestEntity> requestTests = IntStream.range(1, 31)
+                .mapToObj(i -> TestEntity.builder()
+                        .title("제목 " + i)
+                        .content("내용 " + i)
+                        .build())
+                .collect(Collectors.toList());
+        testRepository.saveAll(requestTests);
 
         //expected
-        mockMvc.perform(get("/api/tests")
+        mockMvc.perform(get("/api/tests?page=1&sort=id,desc")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 /*
                 JSON 응답형태가 List형태로 내려진다. 단건 조회처럼 검증하면 안된다.
                  */
-                .andExpect(jsonPath("$.length()", is(2)))
-                .andExpect(jsonPath("$.[0].id").value(request1.getId()))
-                .andExpect(jsonPath("$.[0].title").value("제목1"))
-                .andExpect(jsonPath("$.[0].content").value("내용입니다.1"))
-                .andExpect(jsonPath("$.[1].id").value(request2.getId()))
-                .andExpect(jsonPath("$.[1].title").value("제목2"))
-                .andExpect(jsonPath("$.[1].content").value("내용입니다.2"))
+                .andExpect(jsonPath("$.length()", is(5)))
+                .andExpect(jsonPath("$.[0].id").value(30))
+                .andExpect(jsonPath("$.[0].title").value("제목 30"))
+                .andExpect(jsonPath("$.[0].content").value("내용 30"))
+
                 .andDo(print());
 
     }
