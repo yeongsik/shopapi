@@ -5,6 +5,7 @@ import com.shopapi.member.domain.Address;
 import com.shopapi.member.domain.Member;
 import com.shopapi.member.repository.MemberRepository;
 import com.shopapi.member.request.MemberRequest;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -87,7 +89,7 @@ class MemberControllerTest {
         String json = objectMapper.writeValueAsString(request);
 
         //when
-        mockMvc.perform(post("/members")
+        mockMvc.perform(post("/api/members")
                         .contentType(APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -115,5 +117,55 @@ class MemberControllerTest {
             com.shopapi.member.domain.Member.addressList, could not initialize proxy - no Session
          */
         // TODO: 2022/11/24 주소까지 검증
+    }
+
+    @Test
+    @DisplayName("회원 단건 조회 테스트")
+    void getMemberById() throws Exception {
+
+        //given
+        Member request = Member.builder()
+                .name("테스트 이름")
+                .email("1234@naver.com")
+                .password("1234")
+                .build();
+        memberRepository.save(request);
+
+        //expected
+        mockMvc.perform(get("/api/members/{memberId}", request.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(request.getId()))
+                .andExpect(jsonPath("$.name").value("테스트 이름"))
+                .andExpect(jsonPath("$.email").value("1234@naver.com"))
+                .andExpect(jsonPath("$.password").value("1234"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("회원 다건 조회 페이징 처리")
+    void getMemberListTestByPage () throws Exception {
+
+        //given
+        List<Member> requestList = IntStream.range(1, 31)
+                .mapToObj(i -> Member.builder()
+                        .name("테스트 이름 " + i)
+                        .email(i + "@naver.com")
+                        .password("1234" + i)
+                        .build())
+                .collect(Collectors.toList());
+        memberRepository.saveAll(requestList);
+
+        //expected
+        mockMvc.perform(get("/api/members?page=1")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", Matchers.is(5)))
+                .andExpect(jsonPath("$.[0].id").value(requestList.get(0).getId()))
+                .andExpect(jsonPath("$.[0].name").value(requestList.get(0).getName()))
+                .andExpect(jsonPath("$.[0].email").value(requestList.get(0).getEmail()))
+                .andExpect(jsonPath("$.[0].password").value(requestList.get(0).getPassword()))
+                .andDo(print());
+
     }
 }

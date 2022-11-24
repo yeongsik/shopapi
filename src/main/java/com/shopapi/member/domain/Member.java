@@ -3,7 +3,6 @@ package com.shopapi.member.domain;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -24,8 +23,8 @@ public class Member {
 
     private String password;
 
-    @OneToMany(mappedBy = "member")
-    private List<Address> addressList;
+//    @OneToMany(mappedBy = "member")
+//    private List<Address> addressList;
 
     // 주소
 

@@ -20,8 +20,8 @@ public class Address {
     private String street;
     private String zipCode;
 
-    @ManyToOne
-    @JoinColumn(name = "MEMBER_ID")
-    private Member member;
+//    @ManyToOne
+//    @JoinColumn(name = "MEMBER_ID")
+//    private Member member;
 }
 
