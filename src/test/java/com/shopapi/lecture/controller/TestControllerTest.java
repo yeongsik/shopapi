@@ -214,7 +214,7 @@ class TestControllerTest {
 
         // given
 
-        List<TestEntity> requestTests = IntStream.range(1, 31)
+        List<TestEntity> requestTests = IntStream.range(0, 20)
                 .mapToObj(i -> TestEntity.builder()
                         .title("제목 " + i)
                         .content("내용 " + i)
@@ -223,17 +223,16 @@ class TestControllerTest {
         testRepository.saveAll(requestTests);
 
         //expected
-        mockMvc.perform(get("/api/tests?page=1&sort=id,desc")
+        mockMvc.perform(get("/api/tests?page=1&size=10")
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 /*
                 JSON 응답형태가 List형태로 내려진다. 단건 조회처럼 검증하면 안된다.
                  */
-                .andExpect(jsonPath("$.length()", is(5)))
-                .andExpect(jsonPath("$.[0].id").value(30))
-                .andExpect(jsonPath("$.[0].title").value("제목 30"))
-                .andExpect(jsonPath("$.[0].content").value("내용 30"))
-
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$.[0].id").value(20))
+                .andExpect(jsonPath("$.[0].title").value("제목 19"))
+                .andExpect(jsonPath("$.[0].content").value("내용 19"))
                 .andDo(print());
 
     }

@@ -2,11 +2,11 @@ package com.shopapi.lecture.controller;
 
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.request.TestSearch;
 import com.shopapi.lecture.response.TestResponse;
 import com.shopapi.lecture.service.TestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -160,7 +160,7 @@ public class TestController {
         작성된 글 목록을 가져올 때 필요
      */
     @GetMapping("/api/tests")
-    public List<TestResponse> getList(Pageable pageable) {
-        return testService.getList(pageable);
+    public List<TestResponse> getList(@ModelAttribute TestSearch testSearch) {
+        return testService.getList(testSearch);
     }
 }
