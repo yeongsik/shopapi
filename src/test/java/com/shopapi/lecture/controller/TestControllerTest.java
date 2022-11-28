@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.repository.TestRepository;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.request.TestEdit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -237,4 +237,28 @@ class TestControllerTest {
 
     }
 
+    @Test
+    @DisplayName("/api/tests/{testId} 글 제목 수정 테스트")
+    void testTitleModify() throws Exception {
+
+        // given
+        TestEntity test = TestEntity.builder()
+                .title("홍길동")
+                .content("테스트 내용")
+                .build();
+
+        TestEntity save = testRepository.save(test);
+
+        TestEdit request = TestEdit.builder()
+                .title("홍길동2")
+                .content("테스트 내용")
+                .build();
+
+        //expected
+        mockMvc.perform(patch("/api/tests/{testId}" , save.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }

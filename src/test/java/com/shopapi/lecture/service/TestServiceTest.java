@@ -3,6 +3,7 @@ package com.shopapi.lecture.service;
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.repository.TestRepository;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.request.TestEdit;
 import com.shopapi.lecture.request.TestSearch;
 import com.shopapi.lecture.response.TestResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -113,5 +114,58 @@ class TestServiceTest {
         assertEquals(10L,list.size());
         assertEquals("제목 19",list.get(0).getTitle());
         assertEquals("제목 15",list.get(4).getTitle());
+    }
+    @Test
+    @DisplayName("글 제목 수정")
+    void modifyTitleTest () throws Exception {
+
+        //given
+        TestEntity test = TestEntity.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+
+        testRepository.save(test);
+
+        TestEdit testEdit = TestEdit.builder()
+                .title("호돌걸")
+                .content("반포자")
+                .build();
+
+        //when
+        testService.editByEditor(test.getId() , testEdit);
+
+        //then
+        TestEntity changedTest = testRepository.findById(test.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id =" + test.getId()));
+        assertEquals("호돌걸" , changedTest.getTitle());
+        assertEquals("반포자이" , changedTest.getContent());
+    }
+
+    @Test
+    @DisplayName("글 내용 수정")
+    void modifyContentTest () throws Exception {
+
+        //given
+        TestEntity test = TestEntity.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+
+        testRepository.save(test);
+
+        TestEdit testEdit = TestEdit.builder()
+                .title("호돌맨")
+                .content("초가집")
+                .build();
+
+        //when
+        testService.editByEditor(test.getId() , testEdit);
+
+        //then
+        TestEntity changedTest = testRepository.findById(test.getId())
+                .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id =" + test.getId()));
+        assertEquals("호돌맨" , changedTest.getTitle());
+        assertEquals("초가집" , changedTest.getContent());
     }
 }

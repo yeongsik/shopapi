@@ -26,4 +26,21 @@ public class TestEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void change(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public TestEditor.TestEditorBuilder toEditer() {
+        return TestEditor.builder()
+                .title(title)
+                .content(content);
+
+    }
+
+    public void edit(TestEditor testEditor) {
+        title = testEditor.getTitle();
+        content = testEditor.getContent();
+    }
 }

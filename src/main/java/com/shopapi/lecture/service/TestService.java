@@ -1,14 +1,17 @@
 package com.shopapi.lecture.service;
 
+import com.shopapi.lecture.domain.TestEditor;
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.repository.TestRepository;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.request.TestEdit;
 import com.shopapi.lecture.request.TestSearch;
 import com.shopapi.lecture.response.TestResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,5 +89,34 @@ public class TestService {
         // 빌더 코드들이 굉장히 많아 지기 때문에 -> 반복 작업 증가로 볼 수 도 있다.
         // Response 클래스 안에서 생성자 오버로딩으로 처리
         // 궁금점
+    }
+
+    // 글 수정
+    @Transactional
+    public void edit(Long id, TestEdit testEdit) {
+        TestEntity testEntity = testRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+
+        // 파라미터가 많아지면 실수할 확률이 높아진다.
+        testEntity.change(testEdit.getTitle(), testEdit.getContent());
+    }
+
+    // 호돌맨이 자주 쓰는 패턴
+    @Transactional
+    public void editByEditor(Long id, TestEdit testEdit) {
+        TestEntity testEntity = testRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+
+        // 파라미터가 많아지면 실수할 확률이 높아진다.
+        testEntity.change(testEdit.getTitle(), testEdit.getContent());
+        TestEditor.TestEditorBuilder editorBuilder = testEntity.toEditer();
+
+        TestEditor testEditor = editorBuilder.title(testEdit.getTitle())
+                .content(testEdit.getContent())
+                .build();
+
+        testEntity.edit(testEditor);
     }
 }

@@ -2,6 +2,7 @@ package com.shopapi.lecture.controller;
 
 import com.shopapi.lecture.domain.TestEntity;
 import com.shopapi.lecture.request.TestCreate;
+import com.shopapi.lecture.request.TestEdit;
 import com.shopapi.lecture.request.TestSearch;
 import com.shopapi.lecture.response.TestResponse;
 import com.shopapi.lecture.service.TestService;
@@ -162,5 +163,10 @@ public class TestController {
     @GetMapping("/api/tests")
     public List<TestResponse> getList(@ModelAttribute TestSearch testSearch) {
         return testService.getList(testSearch);
+    }
+
+    @PatchMapping("/api/tests/{testId}")
+    public void edit(@PathVariable Long testId, @RequestBody TestEdit testEdit) {
+        testService.edit(testId, testEdit);
     }
 }
