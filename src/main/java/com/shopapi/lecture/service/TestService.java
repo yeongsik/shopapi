@@ -102,17 +102,19 @@ public class TestService {
         testEntity.change(testEdit.getTitle(), testEdit.getContent());
     }
 
-    // 호돌맨이 자주 쓰는 패턴
+    // 호돌맨이 자주 쓰는 패턴 // 에디터 클래스 이해가 어려우면 위의 방법을 사용하자 ( 빌더 패턴 공부 )
     @Transactional
     public void editByEditor(Long id, TestEdit testEdit) {
         TestEntity testEntity = testRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
 
-
-        // 파라미터가 많아지면 실수할 확률이 높아진다.
-        testEntity.change(testEdit.getTitle(), testEdit.getContent());
+        // 빌더 에디터 빌더 호출 ( 기존 데이터 )
+        // testEditor 빌더 필드에 기존 데이터가 들어가 있는 상황
         TestEditor.TestEditorBuilder editorBuilder = testEntity.toEditer();
 
+        // 빌더 필드에 수정 값 적용 후 testEditor 필드에 빌드
+        // 빌더 클래스를 커스터마이징 하지 않는다면 기존 값으로 만든 에디터 클래스 필드 값이 다시 testEdit 값으로 업데이트 된다.
+        // 에디터 빌더 클래스에 필드를 세팅해주는 메서드에 null 체크 조건 추가 필요
         TestEditor testEditor = editorBuilder.title(testEdit.getTitle())
                 .content(testEdit.getContent())
                 .build();

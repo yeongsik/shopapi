@@ -128,8 +128,8 @@ class TestServiceTest {
         testRepository.save(test);
 
         TestEdit testEdit = TestEdit.builder()
-                .title("호돌걸")
-                .content("반포자")
+                .title(null)
+                .content("초가집")
                 .build();
 
         //when
@@ -138,8 +138,8 @@ class TestServiceTest {
         //then
         TestEntity changedTest = testRepository.findById(test.getId())
                 .orElseThrow(() -> new RuntimeException("글이 존재하지 않습니다. id =" + test.getId()));
-        assertEquals("호돌걸" , changedTest.getTitle());
-        assertEquals("반포자이" , changedTest.getContent());
+        assertEquals("호돌맨" , changedTest.getTitle());
+        assertEquals("초가집" , changedTest.getContent());
     }
 
     @Test
