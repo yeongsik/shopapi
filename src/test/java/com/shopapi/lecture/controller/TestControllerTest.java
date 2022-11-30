@@ -261,4 +261,24 @@ class TestControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("게시글 삭제 테스트")
+    void deleteTest () throws Exception {
+
+        //given
+        TestEntity test = TestEntity.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+
+        testRepository.save(test);
+
+        //expected
+        mockMvc.perform(delete("/api/tests/{testId}", test.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
 }

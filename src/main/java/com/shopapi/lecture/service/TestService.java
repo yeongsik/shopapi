@@ -121,4 +121,12 @@ public class TestService {
 
         testEntity.edit(testEditor);
     }
+
+    public void delete(Long id) {
+        TestEntity testEntity = testRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 글입니다."));
+
+        // 존재하는 경우
+        testRepository.delete(testEntity);
+    }
 }

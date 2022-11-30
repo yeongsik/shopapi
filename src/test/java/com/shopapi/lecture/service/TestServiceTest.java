@@ -168,4 +168,23 @@ class TestServiceTest {
         assertEquals("호돌맨" , changedTest.getTitle());
         assertEquals("초가집" , changedTest.getContent());
     }
+
+    @Test
+    @DisplayName("게시글 삭제")
+    void deleteTest () throws Exception {
+
+        //given
+        TestEntity test = TestEntity.builder()
+                .title("호돌맨")
+                .content("반포자이")
+                .build();
+
+        testRepository.save(test);
+
+        //when
+        testService.delete(test.getId());
+
+        //then
+        assertEquals(0,testRepository.count());
+    }
 }

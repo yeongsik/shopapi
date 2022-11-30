@@ -169,4 +169,9 @@ public class TestController {
     public void edit(@PathVariable Long testId, @RequestBody TestEdit testEdit) {
         testService.edit(testId, testEdit);
     }
+
+    @DeleteMapping("/api/tests/{testId}")
+    public void delete(@PathVariable Long testId) {
+        testService.delete(testId);
+    }
 }
